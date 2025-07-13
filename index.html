@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Instagram Video Downloader</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    input, button { padding: 10px; width: 300px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Instagram Video Downloader</h1>
+  <input id="urlInput" type="text" placeholder="Paste Instagram reel URL" />
+  <br>
+  <button onclick="download()">Download</button>
+  <p id="status"></p>
+
+  <script>
+    async function download() {
+      const url = document.getElementById('urlInput').value;
+      const status = document.getElementById('status');
+      status.textContent = 'Processing...';
+
+      try {
+        const response = await fetch("/download", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed");
+        }
+
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = "video.mp4";
+        link.click();
+        status.textContent = '✅ Download started!';
+      } catch (err) {
+        status.textContent = '❌ Error: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

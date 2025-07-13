@@ -12,8 +12,11 @@ def download():
         return jsonify(error='Invalid URL'), 400
 
     filename = f"{uuid.uuid4()}.mp4"
-    opts = {'format':'best', 'outtmpl':filename}
-
+     opts = {
+        'format': 'best',
+        'outtmpl': filename,
+        'cookiefile': 'instagram_cookies.txt'  # ← this is the key
+    }
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
             ydl.download([url])
